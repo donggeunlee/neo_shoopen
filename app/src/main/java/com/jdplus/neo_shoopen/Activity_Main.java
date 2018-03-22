@@ -26,14 +26,12 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.jdplus.neo_shoopen.util.LayoutSize;
 import com.jdplus.neo_shoopen.util.Web_url;
 
 public class Activity_Main extends AppCompatActivity {
 
     private static final String TAG = "Activity_Main";
     public static Activity_Main m_Ref;
-    LayoutSize m_LayoutSize;
 
     WebView m_WebView;
     boolean m_TimerPaused = false;
@@ -44,7 +42,6 @@ public class Activity_Main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         m_Ref = Activity_Main.this;
-        m_LayoutSize = new LayoutSize(m_Ref);
 
         webView_Load(Web_url.demo);
     }
@@ -176,13 +173,14 @@ public class Activity_Main extends AppCompatActivity {
             final String host = uri.getHost();
             final String scheme = uri.getScheme();
 
-            Uri naverUri = Uri.parse("http://m.naver.com/");
-            Uri shutcutUri = Uri.parse("intent://addshortcut?version=9&url=http%3A%2F%2Fm.smartstore.naver.com%2Finflow%2Foutlink%2Fs%2Flfsquaregy132%3Ftr%3Ddv%26gtme%3D1&icon=http%3A%2F%2Fshop2.phinf.naver.net%2F20170623_244%2Fshoopang7727_1498207939860FRcbu_JPEG%2F21513904484094868_67081880.JPG%3Ftype%3Dround_160&title=LF%EC%8A%A4%ED%80%98%EC%96%B4%20%EA%B4%91%EC%96%91%20%EC%8A%88%ED%8E%9C&serviceCode=shopN#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end");
-            if( uri.equals(naverUri) || uri.equals(shutcutUri)) {
-                return true;
-            }
-            else if(URLUtil.isValidUrl(uri.toString()) == false) {  // URL 이 URL 로써 유효한 것인지 체크
-                if(uri.getScheme().equals("sms") || uri.getScheme().equals("mailto")) {
+            String naverHost = "m.naver.com";
+            Uri shoopenShutcut_scheme = Uri.parse("intent://addshortcut?version=9&url=http%3A%2F%2Fm.smartstore.naver.com%2Finflow%2Foutlink%2Fs%2Flfsquaregy132%3Ftr%3Ddv%26gtme%3D1&icon=http%3A%2F%2Fshop2.phinf.naver.net%2F20170623_244%2Fshoopang7727_1498207939860FRcbu_JPEG%2F21513904484094868_67081880.JPG%3Ftype%3Dround_160&title=LF%EC%8A%A4%ED%80%98%EC%96%B4%20%EA%B4%91%EC%96%91%20%EC%8A%88%ED%8E%9C&serviceCode=shopN#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end");
+
+            if(URLUtil.isValidUrl(uri.toString()) == false) {  // URL 이 URL 로써 유효한 것인지 체크
+                if(uri.equals(shoopenShutcut_scheme)) {
+                    return true;
+                }
+                else if(scheme.equals("sms") || scheme.equals("mailto")) {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setData(uri);
                     m_WebView.getContext().startActivity(intent);
@@ -194,7 +192,10 @@ public class Activity_Main extends AppCompatActivity {
                 }
             }
             else {
-                if(uri.getHost().equals("play.google.com") == true || uri.getHost().equals("store/apps/details")) {
+                if(host.equals(naverHost)) {
+                    return true;
+                }
+                else if(host.equals("play.google.com") == true || host.equals("store/apps/details")) {
                     Intent marketintent = new Intent(Intent.ACTION_VIEW);
                     marketintent.setData(Uri.parse("market://details?id=" + uri.getQueryParameter("id")));
                     m_WebView.getContext().startActivity(marketintent);
