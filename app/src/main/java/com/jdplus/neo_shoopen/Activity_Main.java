@@ -130,7 +130,7 @@ public class Activity_Main extends AppCompatActivity {
 
         // HTML5 Web Cache
         ws.setAppCacheEnabled(true);
-        ws.setAppCacheMaxSize(1024 * 1024 * 8);  // 8M 이 모자라서 죽으면 WebChormeClient 시드쿼터 콜백함수에서 늘려줘야함
+        ws.setAppCacheMaxSize(1024 * 1024 * 8);  // 8M 이 모자라서 죽으면 WebChromeClient 시드쿼터 콜백함수에서 늘려줘야함
         ws.setAppCachePath("data/data" + m_Ref.getPackageName());
 
         // Overlay Scrollbar on top of WebContents
@@ -176,8 +176,13 @@ public class Activity_Main extends AppCompatActivity {
             final String host = uri.getHost();
             final String scheme = uri.getScheme();
 
-            if(URLUtil.isValidUrl(uri.toString()) == false) {  // URL 이 URL 로써 유효한 것인지 체크
-                if(uri.getScheme().equals("SMS") || uri.getScheme().equals("mailto")) {
+            Uri naverUri = Uri.parse("http://m.naver.com/");
+            Uri shutcutUri = Uri.parse("intent://addshortcut?version=9&url=http%3A%2F%2Fm.smartstore.naver.com%2Finflow%2Foutlink%2Fs%2Flfsquaregy132%3Ftr%3Ddv%26gtme%3D1&icon=http%3A%2F%2Fshop2.phinf.naver.net%2F20170623_244%2Fshoopang7727_1498207939860FRcbu_JPEG%2F21513904484094868_67081880.JPG%3Ftype%3Dround_160&title=LF%EC%8A%A4%ED%80%98%EC%96%B4%20%EA%B4%91%EC%96%91%20%EC%8A%88%ED%8E%9C&serviceCode=shopN#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end");
+            if( uri.equals(naverUri) || uri.equals(shutcutUri)) {
+                return true;
+            }
+            else if(URLUtil.isValidUrl(uri.toString()) == false) {  // URL 이 URL 로써 유효한 것인지 체크
+                if(uri.getScheme().equals("sms") || uri.getScheme().equals("mailto")) {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setData(uri);
                     m_WebView.getContext().startActivity(intent);
